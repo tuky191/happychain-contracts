@@ -101,15 +101,10 @@ describe("SequencerRandomOracle", function () {
       const randomness =
         "0xaff07feb058c3908335b80f307a0f0b6e45a45ff17437ea0e2ceec940ce9dd65";
       const hashedRandomness = hashStringTo32Bytes(randomness);
-      // console.log(hashedRandomness);
-      console.log(bufferToHex(hashedRandomness));
-      //   const randomnessBytes32 = ethers.encodeBytes32String(test);
-      //   console.log(test);
       const randomnessHash = ethers.solidityPackedKeccak256(
         ["bytes32"],
         [hashedRandomness]
       );
-      // console.log(randomnessHash);
       await sequencerRandomOracle.postRandomnessCommitment(T, randomnessHash);
       await hre.ethers.provider.send("evm_mine", []);
       for (let i = 0; i < 10; i++) {
@@ -121,8 +116,6 @@ describe("SequencerRandomOracle", function () {
         .to.emit(sequencerRandomOracle, "SequencerRandomnessRevealed")
         .withArgs(T, hashedRandomness);
       const entry = await sequencerRandomOracle.sequencerEntries(T);
-      console.log(entry.randomness);
-      console.log(entry.randomnessHash);
       expect(entry.randomness).to.equal(bufferToHex(hashedRandomness));
       expect(entry.revealed).to.be.true;
     });
